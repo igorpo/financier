@@ -7,6 +7,7 @@ import (
 
 	"net/http"
 
+	"github.com/igorpo/financier/bloomberg"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -38,6 +39,8 @@ func main() {
 		}).Error("failed to parse GET request")
 	}
 
+	fields := make([]string, 0)
+
 	doc := html.NewTokenizer(resp.Body)
 	for tokenType := doc.Next(); tokenType != html.ErrorToken; {
 		token := doc.Token()
@@ -48,6 +51,7 @@ func main() {
 				continue
 			}
 
+			// TODO: add workers and refactor later
 			for _, attr := range token.Attr {
 				if attr.Key == "class" {
 					tagClassName := attr.Val
@@ -55,43 +59,50 @@ func main() {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "exchange") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "priceText") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "changeAbsolute") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "changePercent") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "value") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "fieldValue") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
+							// fmt.Println(tagClassName, ": ", token.String())
+							fields = append(fields, token.String())
 						}
 					}
 				}
@@ -100,4 +111,10 @@ func main() {
 		tokenType = doc.Next()
 	}
 	resp.Body.Close()
+
+	stock := bloomberg.NewImportedStock(fields)
+
+	log.WithFields(log.Fields{
+		"fields": fields,
+	}).Info("future json fields of bloomberg stock")
 }
