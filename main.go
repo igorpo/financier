@@ -115,6 +115,6 @@ func main() {
 	stock := bloomberg.NewImportedStock(fields)
 
 	log.WithFields(log.Fields{
-		"fields": fields,
-	}).Info("future json fields of bloomberg stock")
+		"bloomberg stock": stock,
+	}).Info("bloomberg stock")
 }
