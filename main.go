@@ -51,19 +51,19 @@ func main() {
 			for _, attr := range token.Attr {
 				if attr.Key == "class" {
 					tagClassName := attr.Val
-					if strings.HasPrefix(tagClassName, "priceText") {
-						innerTokenType := doc.Next()
-						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
-							token = doc.Token()
-							fmt.Println(tagClassName, ": ", token.String())
-						}
-					} else if strings.HasPrefix(tagClassName, "companyId") {
+					if strings.HasPrefix(tagClassName, "companyId") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
 							fmt.Println(tagClassName, ": ", token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "exchange") {
+						innerTokenType := doc.Next()
+						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
+							token = doc.Token()
+							fmt.Println(tagClassName, ": ", token.String())
+						}
+					} else if strings.HasPrefix(tagClassName, "priceText") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
