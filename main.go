@@ -48,7 +48,6 @@ func main() {
 				continue
 			}
 
-			//Do something with it, for example extract url
 			for _, attr := range token.Attr {
 				if attr.Key == "class" {
 					tagClassName := attr.Val
@@ -83,6 +82,12 @@ func main() {
 							fmt.Println(tagClassName, ": ", token.String())
 						}
 					} else if strings.HasPrefix(tagClassName, "value") {
+						innerTokenType := doc.Next()
+						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
+							token = doc.Token()
+							fmt.Println(tagClassName, ": ", token.String())
+						}
+					} else if strings.HasPrefix(tagClassName, "fieldValue") {
 						innerTokenType := doc.Next()
 						if innerTokenType != html.ErrorToken && innerTokenType == html.TextToken {
 							token = doc.Token()
